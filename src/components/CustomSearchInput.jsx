@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, Keyboard } from "react-native";
 import React, { useState } from "react";
 import Search from "../../assets/Icons/Search.svg";
 
@@ -9,7 +9,10 @@ export default function CustomSearchInput({ search, setSearch }) {
       <Search />
       <TextInput
         onFocus={() => isFocus(true)}
-        onBlur={() => isFocus(false)}
+        onBlur={() => {
+          isFocus(false);
+          Keyboard.dismiss();
+        }}
         style={styles.textInput}
         placeholder="What Pokémon are you looking for?"
         placeholderTextColor="#747476"

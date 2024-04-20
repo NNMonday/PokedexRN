@@ -6,7 +6,8 @@ import PokemonDetail from "./src/screens/PokemonDetail";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
-import { Text, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView, Text } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -28,18 +29,24 @@ export default function App() {
     return null;
   }
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          options={{
-            headerShown: false,
-          }}
-        >
-          {(props) => <Home {...props} onLayoutRootView={onLayoutRootView} />}
-        </Stack.Screen>
-        <Stack.Screen name="PokemonDetail" component={PokemonDetail} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen
+              name="Home"
+              options={{
+                headerShown: false,
+              }}
+            >
+              {(props) => (
+                <Home {...props} onLayoutRootView={onLayoutRootView} />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="PokemonDetail" component={PokemonDetail} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
