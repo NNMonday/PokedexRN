@@ -3,22 +3,14 @@ import React, { forwardRef, useCallback, useMemo } from "react";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { View, Text, StyleSheet } from "react-native";
 import { GlobalStyles } from "../ultis/Global";
-import GenerationItem from "./GenerationItem";
+import Generation from "./generation/Generation";
+import Sort from "./sort/Sort";
 
 const CustomBottomSheet = forwardRef(
   ({ mode = "", displayMode, setDisplayMode }, ref) => {
-    const styles = StyleSheet.create({
+    const dynamicStyle = StyleSheet.create({
       bottomSheet: {
-        flex: 1,
-        marginLeft: 25,
         marginRight: mode === "Filter" ? 0 : 25,
-      },
-      gensContainer: {
-        flex: 1,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 17,
-        paddingTop: 20,
       },
     });
 
@@ -47,51 +39,21 @@ const CustomBottomSheet = forwardRef(
       []
     );
 
-    const generations = [
-      { name: 1, pokemonsId: [1, 4, 7] },
-      { name: 2, pokemonsId: [152, 155, 158] },
-      { name: 3, pokemonsId: [252, 255, 258] },
-      { name: 4, pokemonsId: [387, 390, 393] },
-      { name: 5, pokemonsId: [495, 498, 501] },
-    ];
-
-    const onGenerationSelected = (generation) => {
-      setDisplayMode((pre) => ({
-        ...pre,
-        generation: pre.generation.includes(generation)
-          ? pre.generation.filter((g) => g !== generation)
-          : [...pre.generation, generation],
-      }));
-    };
-
     const renderContent = () => {
       switch (mode) {
         case "Generation":
           return (
-            <>
-              <Text style={GlobalStyles.pokemonName}>Generations</Text>
-              <Text style={GlobalStyles.description}>
-                Use search for generations to explore your Pokémon!
-              </Text>
-              <View style={styles.gensContainer}>
-                {generations.map((g, i) => (
-                  <GenerationItem
-                    selected={displayMode.generation.includes(g.name)}
-                    key={i}
-                    generation={g}
-                    onGenerationSelected={() => {
-                      onGenerationSelected(g.name);
-                    }}
-                  />
-                ))}
-              </View>
-            </>
+            <Generation
+              setDisplayMode={setDisplayMode}
+              selectedGeneration={displayMode.generation}
+            />
           );
         case "Sort":
           return (
-            <>
-              <Text style={GlobalStyles.pokemonName}>Sort</Text>
-            </>
+            <Sort
+              setDisplayMode={setDisplayMode}
+              selectedSortType={displayMode.sort}
+            />
           );
         case "Filter":
           return (
@@ -102,7 +64,7 @@ const CustomBottomSheet = forwardRef(
         default:
           return (
             <>
-              <Text style={GlobalStyles.pokemonName}></Text>
+              <Text style={GlobalStyles.pokemonName}>BottomSheet</Text>
             </>
           );
       }
@@ -121,10 +83,19 @@ const CustomBottomSheet = forwardRef(
         }}
         backdropComponent={renderBackdrop}
       >
-        <View style={styles.bottomSheet}>{renderContent()}</View>
+        <View style={[styles.bottomSheet, dynamicStyle.bottomSheet]}>
+          {renderContent()}
+        </View>
       </BottomSheet>
     );
   }
 );
 
 export default CustomBottomSheet;
+
+const styles = StyleSheet.create({
+  bottomSheet: {
+    flex: 1,
+    marginLeft: 25,
+  },
+});

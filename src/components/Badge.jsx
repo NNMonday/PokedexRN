@@ -21,18 +21,9 @@ import Steel from "../../assets/Vectors/Types/Steel.svg";
 import Water from "../../assets/Vectors/Types/Water.svg";
 
 export default function Badge({ type }) {
-  const styles = StyleSheet.create({
+  const dynamicStyle = StyleSheet.create({
     badgeContainer: {
       backgroundColor: getTypeColor(type.name),
-      borderRadius: 3,
-      padding: 5,
-      flexDirection: "row",
-      columnGap: 5,
-      alignItems: "center",
-    },
-    badgeText: {
-      color: "white",
-      fontSize: 13,
     },
   });
 
@@ -59,9 +50,23 @@ export default function Badge({ type }) {
 
   const TypeIcon = TypeIcons[capitalizeWords(type.name)];
   return (
-    <View style={styles.badgeContainer}>
+    <View style={[styles.badgeContainer, dynamicStyle.badgeContainer]}>
       <TypeIcon />
       <Text style={styles.badgeText}>{capitalizeWords(type.name)}</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  badgeContainer: {
+    borderRadius: 3,
+    padding: 5,
+    flexDirection: "row",
+    columnGap: 5,
+    alignItems: "center",
+  },
+  badgeText: {
+    color: "white",
+    fontSize: 13,
+  },
+});

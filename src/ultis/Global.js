@@ -33,4 +33,16 @@ export const GlobalStyles = StyleSheet.create({
     fontFamily: "SF-Pro-Display-Medium",
     fontSize: 12,
   },
+  buttonSelected: {
+    backgroundColor: "#EA5D60",
+  },
+  textSelected: {
+    color: "#FFFFFF",
+  },
+  buttonUnselected: {
+    backgroundColor: "#F2F2F2",
+  },
+  textUnselected: {
+    color: "#747476",
+  },
 });

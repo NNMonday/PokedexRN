@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
+import React from "react";
 
-export default function PokemonDetail() {
+export default function PokemonDetail({ route }) {
+  const { pokemon } = route.params;
   return (
     <View>
-      <Text>PokemonDetail</Text>
+      <Text>{pokemon.name}</Text>
     </View>
-  )
+  );
 }
