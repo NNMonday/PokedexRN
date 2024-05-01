@@ -4,7 +4,8 @@ import { GlobalStyles } from "../../ultis/Global";
 import { generations } from "../../ultis/Const";
 import GenerationItem from "./GenerationItem";
 
-export default function Generation({ setDisplayMode, selectedGeneration }) {
+export default function Generation({ setDisplayMode, selectedGenerations }) {
+  console.log(selectedGenerations);
   return (
     <>
       <Text style={GlobalStyles.pokemonName}>Generations</Text>
@@ -14,13 +15,15 @@ export default function Generation({ setDisplayMode, selectedGeneration }) {
       <View style={styles.gensContainer}>
         {generations.map((g, i) => (
           <GenerationItem
-            selected={selectedGeneration === g.name}
+            selected={selectedGenerations.includes(g.name)}
             key={i}
             generation={g}
             onGenerationSelected={() => {
               setDisplayMode((pre) => ({
                 ...pre,
-                generation: g.name === pre.generation ? 0 : g.name,
+                generations: pre.generations.includes(g.name)
+                  ? [...pre.generations.filter((i) => i !== g.name)]
+                  : [...pre.generations, g.name],
               }));
             }}
           />

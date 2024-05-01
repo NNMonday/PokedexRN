@@ -1,5 +1,30 @@
 export const ROOT_API = "https://pokedex-rn-json-server.vercel.app/pokemons";
-export const PER_PAGE = 5;
+export const LIMIT = 10;
+export const CARD_HEIGHT = 130;
+
+export const TYPES = [
+  "Bug",
+  "Dark",
+  "Dragon",
+  "Electric",
+  "Fairy",
+  "Fighting",
+  "Fire",
+  "Flying",
+  "Ghost",
+  "Grass",
+  "Ground",
+  "Ice",
+  "Normal",
+  "Poison",
+  "Psychic",
+  "Rock",
+  "Steel",
+  "Water",
+];
+
+export const HEIGHTS = ["Short", "Medium", "Tall"];
+export const WEIGHTS = ["Light", "Normal", "Heavy"];
 
 export const generations = [
   { name: 1, pokemonsId: [1, 4, 7] },
@@ -33,5 +58,35 @@ export const sortTypesList = [
   {
     name: "Z-A",
     query: "_sort=name&_order=desc",
+  },
+];
+
+export const filterHeightList = [
+  {
+    name: "Short",
+    query: "height_lte=100",
+  },
+  {
+    name: "Medium",
+    query: "height_gte=100&height_lte=200",
+  },
+  {
+    name: "Tall",
+    query: "height_gte=200",
+  },
+];
+
+export const filterWeightList = [
+  {
+    name: "Light",
+    query: "weight_lte=100",
+  },
+  {
+    name: "Medium",
+    query: "weight_gte=100&weight_lte=500",
+  },
+  {
+    name: "Heavy",
+    query: "weight_gte=500",
   },
 ];

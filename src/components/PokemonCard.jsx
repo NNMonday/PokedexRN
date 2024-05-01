@@ -7,6 +7,7 @@ import {
 } from "../ultis/ReuseFn";
 import { GlobalStyles } from "../ultis/Global";
 import Badge from "./Badge";
+import { CARD_HEIGHT } from "../ultis/Const";
 
 export default function PokemonCard({ pokemon, navigation }) {
   const dynamicStyle = StyleSheet.create({
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
-    height: 130,
+    height: CARD_HEIGHT,
   },
   details: {
     paddingTop: 20,

@@ -53,7 +53,13 @@ export default function App() {
                   <Home {...props} onLayoutRootView={onLayoutRootView} />
                 )}
               </Stack.Screen>
-              <Stack.Screen name="PokemonDetail" component={PokemonDetail} />
+              <Stack.Screen
+                name="PokemonDetail"
+                component={PokemonDetail}
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack.Navigator>
           </NavigationContainer>
         </GestureHandlerRootView>

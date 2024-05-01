@@ -19,8 +19,11 @@ import PokemonCard from "../components/PokemonCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import axios from "axios";
 import {
-  PER_PAGE,
+  CARD_HEIGHT,
+  LIMIT,
   ROOT_API,
+  filterHeightList,
+  filterWeightList,
   generationLimit,
   sortTypesList,
 } from "../ultis/Const";
@@ -31,26 +34,50 @@ const windowWidth = Dimensions.get("window").width;
 export default function Home({ onLayoutRootView, navigation }) {
   const [displayPokesList, setDisplayPokesList] = useState([]);
   const [endMode, setEndMode] = useState("loading");
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [displayMode, setDisplayMode] = useState({
+    search: "",
     sort: "Smallest number first",
-    filter: { types: [], weaknesses: [], height: [], range: [] },
-    generation: 0,
+    filter: {
+      types: [],
+      weaknesses: [],
+      heights: [],
+      weights: [],
+      range: {
+        start: 0,
+        end: 649,
+      },
+    },
+    generations: [],
   });
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  const [debounceDisplayMode, setDebounceDisplayMode] = useState({
+    search: "",
+    sort: "Smallest number first",
+    filter: {
+      types: [],
+      weaknesses: [],
+      heights: [],
+      weights: [],
+      range: {
+        start: 0,
+        end: 649,
+      },
+    },
+    generations: [],
+  });
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!refreshing) {
-      const debouncedSave = debounce((search) => {
-        setDebouncedSearch(search);
+      const debouncedSave = debounce((displayMode) => {
+        setDebounceDisplayMode(displayMode);
       }, 500);
-      debouncedSave(search);
+      debouncedSave(displayMode);
       return debouncedSave.cancel;
     }
-  }, [search]);
+  }, [displayMode]);
 
   useEffect(() => {
     setEndMode("loading");
@@ -60,30 +87,47 @@ export default function Home({ onLayoutRootView, navigation }) {
       setPage(1);
       setLoading(true);
     }
-  }, [debouncedSearch, displayMode]);
+  }, [debounceDisplayMode]);
 
   useEffect(() => {
     const callAPI = async () => {
       if (loading) {
         const queryParams = [];
-        if (debouncedSearch.trim().length > 0) {
+        if (debounceDisplayMode.search.trim().length > 0) {
           queryParams.push(
-            isPositiveInteger(debouncedSearch.trim())
-              ? `id_like=${debouncedSearch.trim()}`
-              : `name_like=${debouncedSearch.trim().toLowerCase()}`
+            isPositiveInteger(debounceDisplayMode.search.trim())
+              ? `id_like=${debounceDisplayMode.search.trim()}`
+              : `name_like=${debounceDisplayMode.search.trim().toLowerCase()}`
           );
         }
 
-        if (displayMode.generation > 0) {
-          const { start, end } = generationLimit[displayMode.generation];
+        if (debounceDisplayMode.generations.length > 0) {
+          const { start, end } =
+            generationLimit[debounceDisplayMode.generations[0]];
           queryParams.push(`id_gte=${start}&id_lte=${end}`);
         }
 
+        if (debounceDisplayMode.filter.heights.length > 0) {
+          queryParams.push(
+            filterHeightList.find(
+              (h) => h.name === debounceDisplayMode.filter.heights[0]
+            ).query
+          );
+        }
+
+        if (debounceDisplayMode.filter.weights.length > 0) {
+          queryParams.push(
+            filterWeightList.find(
+              (w) => w.name === debounceDisplayMode.filter.weights[0]
+            ).query
+          );
+        }
+
         queryParams.push(
-          sortTypesList.find((t) => t.name === displayMode.sort).query
+          sortTypesList.find((t) => t.name === debounceDisplayMode.sort).query
         );
 
-        queryParams.push(`_page=${page}`, `_per_page=${PER_PAGE}`);
+        queryParams.push(`_page=${page}`, `_limit=${LIMIT}`);
         const dataUrl = `${ROOT_API}?${queryParams.join("&")}`;
         console.log("Data url:", dataUrl);
         try {
@@ -94,7 +138,7 @@ export default function Home({ onLayoutRootView, navigation }) {
           setEndMode(() => {
             const isDataEmpty = res.data.length === 0;
             const isDisplayListEmpty = displayPokesList.length === 0;
-            const isDataLessThanPerPage = res.data.length < PER_PAGE;
+            const isDataLessThanPerPage = res.data.length < LIMIT;
 
             if (isDataEmpty && isDisplayListEmpty) return "no-match";
             if (!isDisplayListEmpty && isDataLessThanPerPage) return "end";
@@ -130,12 +174,35 @@ export default function Home({ onLayoutRootView, navigation }) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setSearch("");
-    setDebouncedSearch("");
     setDisplayMode({
+      search: "",
       sort: "Smallest number first",
-      filter: { types: [], weaknesses: [], height: [], range: [] },
-      generation: 0,
+      filter: {
+        types: [],
+        weaknesses: [],
+        heights: [],
+        weights: [],
+        range: {
+          start: 0,
+          end: 649,
+        },
+      },
+      generations: [],
+    });
+    setDebounceDisplayMode({
+      search: "",
+      sort: "Smallest number first",
+      filter: {
+        types: [],
+        weaknesses: [],
+        heights: [],
+        weights: [],
+        range: {
+          start: 0,
+          end: 649,
+        },
+      },
+      generations: [],
     });
   }, []);
 
@@ -190,7 +257,10 @@ export default function Home({ onLayoutRootView, navigation }) {
         <Text style={GlobalStyles.description}>
           Search for Pokémon by name or using the National Pokédex number.
         </Text>
-        <CustomSearchInput search={search} setSearch={setSearch} />
+        <CustomSearchInput
+          search={displayMode.search}
+          setSearch={(search) => setDisplayMode((pre) => ({ ...pre, search }))}
+        />
         {endMode === "no-match" ? (
           <Text>No pokemon match</Text>
         ) : (
@@ -199,6 +269,11 @@ export default function Home({ onLayoutRootView, navigation }) {
             data={displayPokesList}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
+            getItemLayout={(data, index) => ({
+              length: CARD_HEIGHT,
+              offset: CARD_HEIGHT * index,
+              index,
+            })}
             initialNumToRender={20}
             maxToRenderPerBatch={20}
             windowSize={15}

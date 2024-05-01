@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet, Image } from "react-native";
-import React, { useMemo } from "react";
+import React from "react";
 import { GlobalStyles } from "../../ultis/Global";
 
 export default function GenerationItem({
