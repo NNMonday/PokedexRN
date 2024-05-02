@@ -2,8 +2,10 @@ import jsonServer from "json-server";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import { injectSpeedInsights } from "@vercel/speed-insights";
+import { inject } from "@vercel/analytics";
 
 injectSpeedInsights();
+inject();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
