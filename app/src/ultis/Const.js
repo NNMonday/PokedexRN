@@ -1,4 +1,5 @@
-export const ROOT_API = "https://pokedex-rn-json-server.vercel.app/pokemons";
+export const ROOT_API =
+  "https://pokedex-rn-json-server.nnmonday.click/pokemons";
 export const LIMIT = 10;
 export const CARD_HEIGHT = 130;
 
